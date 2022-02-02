@@ -48,8 +48,8 @@ pubsub = MainManager(BACKEND)
 
 # create a producer to publish predictions
 producer = pubsub.create_producer(TO_TOPIC_ID)
+print("Model server producer started...")
 
 # create a consumer to load images
 consumer = pubsub.create_consumer(FROM_TOPIC_ID, predict_img, FROM_SUBSCRIPTION_ID)
-print("classifier consumer service started...")
-print("classifier producer service started...")
+print("Model server consumer started...")

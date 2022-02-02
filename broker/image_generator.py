@@ -15,7 +15,7 @@ test_set = torchvision.datasets.FashionMNIST(
 # create a producer object
 pubsub = MainManager(BACKEND)
 producer = pubsub.create_producer(TOPIC_ID)
-print("feeding service started...")
+print("Image generator started...")
 
 # start pushing images to the topic
 for i, img in enumerate(test_set):
