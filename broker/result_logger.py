@@ -8,7 +8,7 @@ FROM_SUBSCRIPTION_ID = 'prediction-receiver'
 
 def callback(key, value):
     value = json.loads(value.decode())
-    print(f"Log Received\n\tvalue:\n{json.dumps(value, indent=2)}\n\n")
+    print(f"Log Received:\n{json.dumps(value, indent=2)}\n\n")
 
 # create a consumer
 pubsub = MainManager(BACKEND)

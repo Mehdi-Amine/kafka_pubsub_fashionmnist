@@ -27,7 +27,7 @@ for i, img in enumerate(test_set):
         buff.seek(0)
         key = f'img-{i}-label-{label}'
         producer.produce(buff.getvalue(), key=key.encode())
-        print(f'pushed image with actual label {test_set.classes[label]}.')
-    q = input("cont:?")
-    if q =='q':
+        print(f'pushed image labeled: {test_set.classes[label]}.')
+    prompt = input("Continue ?")
+    if prompt =='n':
         break
