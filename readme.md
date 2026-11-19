@@ -1,5 +1,11 @@
 # Fashion MNIST with Kafka and Google Pub/Sub
 
+Streaming model inference behind one message-broker interface. A producer publishes Fashion-MNIST images, a PyTorch CNN serves predictions, and a logger consumes the results. The same code runs on Apache Kafka or Google Cloud Pub/Sub; you choose the backend with one argument.
+
+**What it shows:** a broker-agnostic producer/consumer layer, a model served as a stream consumer, and cloud setup on GCP.
+
+**Stack:** Python, PyTorch, Apache Kafka, Google Cloud Pub/Sub, Docker.
+
 ## Video Demo
 **The following image links to a video demo:**
 
@@ -19,14 +25,14 @@ source venv/bin/activate
 
 ## Setup
 
-In [Google Cloup Platform](https://console.cloud.google.com/) create a project and paste the generated project ID inside the file ```loger/setup.sh``` for the variable ```GOOGLE_CLOUD_PROJECT```. Generate a json key to authenticate and enter its path for the variable ```PUBSUB_CONFIG_PATH``` inside the file ```loger/setup.sh```. [This video](https://www.youtube.com/watch?v=xOtrCmPjal8) provides clear instructions for locating the project ID and generating the key. 
+In [Google Cloud Platform](https://console.cloud.google.com/) create a project and paste the generated project ID inside the file ```broker/setup.sh``` for the variable ```GOOGLE_CLOUD_PROJECT```. Generate a json key to authenticate and enter its path for the variable ```PUBSUB_CONFIG_PATH``` inside the file ```broker/setup.sh```. [This video](https://www.youtube.com/watch?v=xOtrCmPjal8) provides clear instructions for locating the project ID and generating the key. 
 
 Create two Pub/Sub topics ```images``` and ```predictions```.
 <img width="1280" alt="topics" src="https://user-images.githubusercontent.com/47016362/152097171-8783f7bc-59fb-4046-95d6-22e45705a9e2.png">
 
 Then create two Pub/Sub subscribers: 
-- ```images-sub```: used inside the ```loger/model_server.py``` to consume images sent by the ```loger/image_generator.py``` through the topic ``ìmages```
-- ```prediction-receiver```: used inside the ```loger/result_logger.py``` to consume predictions sent by the ```loger/model_server.py```through the topic ```predictions```
+- ```images-sub```: used inside the ```broker/model_server.py``` to consume images sent by the ```broker/image_generator.py``` through the topic ```images```
+- ```prediction-receiver```: used inside the ```broker/result_logger.py``` to consume predictions sent by the ```broker/model_server.py``` through the topic ```predictions```
 <img width="1280" alt="subs" src="https://user-images.githubusercontent.com/47016362/152098711-63dfbfb4-6ca6-4e81-b010-811e690fe843.png">
 
 
@@ -48,7 +54,7 @@ Begin by initializing a MainManager instance. Choose between 'kafka' and 'pubsub
         self.configs = json.load(open(os.getenv('PUBSUB_CONFIG_PATH')))
 ```
 
-To use a **message consumer**, initialize a MainManager instance from ```broker/kafka_pubsub.py```, then call its function ```create_consumer()```.
+To use a **message consumer**, initialize a MainManager instance from ```broker/pubsub_kafka.py```, then call its function ```create_consumer()```.
 ```python
     def create_consumer(self, topic_id: str, callback: Callable, gcp_subscription_id:str=None):
         """create a consumer object that listen on the given topic and apply the callable function.
@@ -75,7 +81,7 @@ To use a **message consumer**, initialize a MainManager instance from ```broker/
             runner_thread.start()
 ```
 
-To use a **message producer**, initialize a MainManager instance from ```broker/kafka_pubsub.py```, then call its function ```create_producer()```.
+To use a **message producer**, initialize a MainManager instance from ```broker/pubsub_kafka.py```, then call its function ```create_producer()```.
 ```python
     def create_producer(self, topic_id: str):
         """create a producer object that pushes messages on the given topic.
